@@ -44,11 +44,8 @@ public class ManualBillFrame extends javax.swing.JFrame {
     private final String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     private final String[] fullMonths = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 
-    private DatabaseConnection databaseConnection;
-    private ManualBillSQL manualBillSql;
-
     private List<ManualBill> manualBills = new LinkedList<>();
-    private Map<String, Double> otherCharges = new HashMap<>();
+    private final Map<String, Double> otherCharges = new HashMap<>();
 
     private Configuration configuration;
     private final Flat flat;
@@ -57,9 +54,6 @@ public class ManualBillFrame extends javax.swing.JFrame {
 
     private final String fromMonthYear;
     private final String toMonthYear;
-
-    private int from;
-    private int to;
 
     private final boolean isReceipt;
 
@@ -201,7 +195,7 @@ public class ManualBillFrame extends javax.swing.JFrame {
                             + "<td>")
                     .append(fullMonths[mBills.getMonth() - 1])
                     .append(" ")
-                    .append(2000 + mBills.getYear())
+                    .append(mBills.getYear())
                     .append("</td>"
                             + "<td align='right'>")
                     .append(formatDouble(mBills.getAmount()))
@@ -260,12 +254,12 @@ public class ManualBillFrame extends javax.swing.JFrame {
         ManageConfig manageConfig = new ManageConfig();
         configuration = manageConfig.getConfiguration();
 
-        from = Integer.parseInt(fromMonthYear.split(" ")[1]) * 100 + Arrays.asList(months).indexOf(fromMonthYear.split(" ")[0]) + 1;
-        to = Integer.parseInt(toMonthYear.split(" ")[1]) * 100 + Arrays.asList(months).indexOf(toMonthYear.split(" ")[0]) + 1;
+        int from = Integer.parseInt(fromMonthYear.split(" ")[1]) * 100 + Arrays.asList(months).indexOf(fromMonthYear.split(" ")[0]) + 1;
+        int to = Integer.parseInt(toMonthYear.split(" ")[1]) * 100 + Arrays.asList(months).indexOf(toMonthYear.split(" ")[0]) + 1;
 
-        databaseConnection = new DatabaseConnection();
+        DatabaseConnection databaseConnection = new DatabaseConnection();
         if (databaseConnection.connect()) {
-            manualBillSql = new ManualBillSQL(databaseConnection);
+            ManualBillSQL manualBillSql = new ManualBillSQL(databaseConnection);
             manualBills = manualBillSql.getById(flat.getFlatNumber(), from, to);
         }
 
@@ -329,28 +323,5 @@ public class ManualBillFrame extends javax.swing.JFrame {
         } catch (PrinterException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Printing Error", JOptionPane.ERROR_MESSAGE);
         }
-
-//        try {
-//            PrinterJob pjob = PrinterJob.getPrinterJob();
-//            pjob.setJobName("Graphics Demo Printout");
-//            pjob.setCopies(1);
-//            pjob.setPrintable((Graphics graphics, PageFormat pageFormat, int pageIndex) -> {
-//                if (pageIndex > 0) // we only print one page
-//                {
-//                    return Printable.NO_SUCH_PAGE; // ie., end of job
-//                }
-//                graphics.drawString(billHTML(), 10, 10);
-//
-//                return Printable.PAGE_EXISTS;
-//            });
-//
-//            if (pjob.printDialog() == false) // choose printer
-//            {
-//                return;
-//            }
-//            pjob.print();
-//        } catch (PrinterException pe) {
-//            JOptionPane.showMessageDialog(this, pe.getMessage(), "Printer Job Error", JOptionPane.ERROR_MESSAGE);
-//        }
     }
 }

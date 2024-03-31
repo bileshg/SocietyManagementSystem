@@ -22,12 +22,6 @@ public class ManualBillSQL {
 
     private final DatabaseConnection databaseConnection;
 
-    private PreparedStatement getRecords = null;
-    
-    private final String selectByFlatNumber =   "select * from manual_bills " +
-                                                "where flat_number = ? " +
-                                                "and monthyear >= ? and monthyear <= ?";
-
     public ManualBillSQL() {
         databaseConnection = new DatabaseConnection();
         databaseConnection.connect();
@@ -41,7 +35,10 @@ public class ManualBillSQL {
         List<ManualBill> manualBills = new ArrayList<>();
 
         try {
-            getRecords = databaseConnection.getConnection().prepareStatement(selectByFlatNumber);
+            String selectByFlatNumber = "select * from manual_bills " +
+                    "where flat_number = ? " +
+                    "and monthyear >= ? and monthyear <= ?";
+            PreparedStatement getRecords = databaseConnection.getConnection().prepareStatement(selectByFlatNumber);
             getRecords.setInt(1, Integer.parseInt(flatNumber));
             getRecords.setInt(2, from);
             getRecords.setInt(3, to);

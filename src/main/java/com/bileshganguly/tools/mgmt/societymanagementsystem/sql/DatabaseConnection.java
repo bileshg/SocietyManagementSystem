@@ -45,14 +45,12 @@ public class DatabaseConnection {
         return true;
     }
 
-    public boolean disconnect() {
+    public void disconnect() {
         try {
             if (connection != null) {
                 connection.close();
             }
-        } catch (SQLException e) {
-            return false;
+        } catch (SQLException ignored) {
         }
-        return true;
     }
 }

@@ -6,11 +6,11 @@
 package com.bileshganguly.tools.mgmt.societymanagementsystem.config;
 
 import com.bileshganguly.tools.mgmt.societymanagementsystem.model.Configuration;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Properties;
 import javax.swing.JOptionPane;
 
@@ -26,11 +26,8 @@ public class ManageConfig {
         Configuration configuration = new Configuration();
 
         Properties prop = new Properties();
-        InputStream input = null;
 
-        try {
-
-            input = new FileInputStream(FILENAME);
+        try (InputStream input = Files.newInputStream(Paths.get(FILENAME))) {
 
             //load a properties file from class path, inside static method
             prop.load(input);
@@ -45,13 +42,6 @@ public class ManageConfig {
 
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Config Error", JOptionPane.ERROR_MESSAGE);
-        } finally {
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (IOException e) {
-                }
-            }
         }
 
         return configuration;
@@ -59,11 +49,8 @@ public class ManageConfig {
 
     public void setConfiguration(final Configuration configuration) {
         Properties prop = new Properties();
-        OutputStream output = null;
 
-        try {
-
-            output = new FileOutputStream(FILENAME);
+        try (OutputStream output = Files.newOutputStream(Paths.get(FILENAME))) {
 
             // set the properties value
             prop.setProperty("building.name", configuration.getBuildingName());
@@ -80,14 +67,6 @@ public class ManageConfig {
             JOptionPane.showMessageDialog(null, io.getMessage(), "Config Error", JOptionPane.ERROR_MESSAGE);
         } catch (NumberFormatException nfe) {
             JOptionPane.showMessageDialog(null, "Please enter only numbers in the fixed and tenant rate fields.", "Config Error", JOptionPane.ERROR_MESSAGE);
-        } finally {
-            if (output != null) {
-                try {
-                    output.close();
-                } catch (IOException e) {
-                }
-            }
-
         }
     }
 }

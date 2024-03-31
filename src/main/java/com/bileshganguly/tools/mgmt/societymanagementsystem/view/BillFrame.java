@@ -31,7 +31,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 
 /**
@@ -39,12 +38,9 @@ import javax.swing.JTextPane;
  * @author bilesh
  */
 public class BillFrame extends javax.swing.JFrame {
-    
-    private DatabaseConnection databaseConnection;
-    private ChargeTypeDaoImpl dbChargeType;
 
     private List<ChargeType> chargeTypes = new LinkedList<>();
-    private Map<String, Double> manualRecords = new HashMap<>();
+    private final Map<String, Double> manualRecords = new HashMap<>();
 
     private Configuration configuration;
     private final Flat flat;
@@ -52,7 +48,6 @@ public class BillFrame extends javax.swing.JFrame {
     private String today;
 
     private final String monthYear;
-    private final boolean isFixed = true;
     private final boolean isTenant;
     private final boolean isReceipt;
     
@@ -206,6 +201,7 @@ public class BillFrame extends javax.swing.JFrame {
         }
         
         // For Fixed Rate
+        boolean isFixed = true;
         if(isFixed) {
             sb.append("<tr>"
                     + "<td align='right'>")
@@ -338,10 +334,10 @@ public class BillFrame extends javax.swing.JFrame {
     private void init() {
         ManageConfig manageConfig = new ManageConfig();
         configuration = manageConfig.getConfiguration();
-        
-        databaseConnection = new DatabaseConnection();
+
+        DatabaseConnection databaseConnection = new DatabaseConnection();
         if (databaseConnection.connect()) {
-            dbChargeType = new ChargeTypeDaoImpl(databaseConnection);
+            ChargeTypeDaoImpl dbChargeType = new ChargeTypeDaoImpl(databaseConnection);
             chargeTypes = dbChargeType.getAll();
         }
 
@@ -444,28 +440,5 @@ public class BillFrame extends javax.swing.JFrame {
         } catch (PrinterException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Printing Error", JOptionPane.ERROR_MESSAGE);
         }
-        
-//        try {
-//            PrinterJob pjob = PrinterJob.getPrinterJob();
-//            pjob.setJobName("Graphics Demo Printout");
-//            pjob.setCopies(1);
-//            pjob.setPrintable((Graphics graphics, PageFormat pageFormat, int pageIndex) -> {
-//                if (pageIndex > 0) // we only print one page
-//                {
-//                    return Printable.NO_SUCH_PAGE; // ie., end of job
-//                }
-//                graphics.drawString(billHTML(), 10, 10);
-//
-//                return Printable.PAGE_EXISTS;
-//            });
-//
-//            if (pjob.printDialog() == false) // choose printer
-//            {
-//                return;
-//            }
-//            pjob.print();
-//        } catch (PrinterException pe) {
-//            JOptionPane.showMessageDialog(this, pe.getMessage(), "Printer Job Error", JOptionPane.ERROR_MESSAGE);
-//        }
     }
 }
